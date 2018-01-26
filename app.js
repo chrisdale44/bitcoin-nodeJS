@@ -15,7 +15,7 @@ app.get("/", function(req, res) {
 });
 
 app.get("/block", function(req, res) {
-    res.send("Current blockheight: " + btcBlocks);
+    res.sendFile("index.html", { root: __dirname });
 });
 
 app.listen(8080, function() {
