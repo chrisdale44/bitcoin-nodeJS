@@ -22,7 +22,17 @@ app.post("/wallet", function(req, res) {
     var privateKey = new bitcore.PrivateKey(bn).toWIF();
     var address = new bitcore.PrivateKey(bn).toAddress();
 
-    res.send("The Brain wallet of: " + brainsrc + "<br>Address: " + address + "<br> Private key: " + privateKey);
+    request({
+        url: "https://blockchain.info/address/" + address + "?format=json",
+        json: true
+    }, function(error, response, body) {
+        var n_transations = body.n_tx;
+        
+        res.send("The Brain wallet of: " + brainsrc + 
+            "<br>Address: " + address + 
+            "<br>Private key: " + privateKey +
+            "<br>No. of transations: " + n_transations);
+    });    
 });
 
 app.listen(8080, function() {
