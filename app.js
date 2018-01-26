@@ -9,14 +9,8 @@ app.use(bodyparser.urlencoded({
 }));
 app.use(bodyparser.json());
 
-app.get("/", function(req, res) {
-    res.sendFile("./index.html", { root: __dirname });
-});
-
-app.post("/wallet", function(req, res) {
-    var brainsrc = req.body.brainsrc;
-    
-    var input = new Buffer(brainsrc);
+function brainWallet(userInput, callback) {
+    var input = new Buffer(userInput);
     var hash = bitcore.crypto.Hash.sha256(input);
     var bn = bitcore.crypto.BN.fromBuffer(hash);
     var privateKey = new bitcore.PrivateKey(bn).toWIF();
@@ -27,12 +21,23 @@ app.post("/wallet", function(req, res) {
         json: true
     }, function(error, response, body) {
         var n_transations = body.n_tx;
-        
+        callback(privateKey, address, n_transations); 
+    });
+}
+
+app.get("/", function(req, res) {
+    res.sendFile("./index.html", { root: __dirname });
+});
+
+app.post("/wallet", function(req, res) {
+    var brainsrc = req.body.brainsrc;
+    
+    brainWallet(brainsrc, function(privateKey, address, n_transations) {
         res.send("The Brain wallet of: " + brainsrc + 
-            "<br>Address: " + address + 
-            "<br>Private key: " + privateKey +
-            "<br>No. of transations: " + n_transations);
-    });    
+        "<br>Address: " + address + 
+        "<br>Private key: " + privateKey +
+        "<br>No. of transations: " + n_transations);
+    });
 });
 
 app.listen(8080, function() {
