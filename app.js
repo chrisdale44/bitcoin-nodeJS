@@ -9,6 +9,8 @@ app.use(bodyparser.urlencoded({
 }));
 app.use(bodyparser.json());
 
+app.set("view engine", "ejs")
+
 function brainWallet(userInput, callback) {
     var input = new Buffer(userInput);
     var hash = bitcore.crypto.Hash.sha256(input);
@@ -25,8 +27,17 @@ function brainWallet(userInput, callback) {
     });
 }
 
+request({
+    url: "https://blockchain.info/ticker",
+    json: true
+}, function(err, res, body) {
+    price = body.USD.last
+})
+
 app.get("/", function(req, res) {
-    res.sendFile("./index.html", { root: __dirname });
+    res.render("index", {
+        lastPrice: price
+    });
 });
 
 app.post("/wallet", function(req, res) {
