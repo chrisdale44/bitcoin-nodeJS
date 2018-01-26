@@ -1,23 +1,22 @@
 var express = require("express");
 var app = express();
 var request = require("request");
+var bodyparser = require("body-parser");
 
-request({
-    url: "https://blockchain.info/stats?format=json",
-    json: true
-}, function(error, response, body) {
-    btcPrice = body.market_price_usd
-    btcBlocks = body.n_blocks_total
-});
+app.use(bodyparser.urlencoded({
+    extended: true
+}));
+app.use(bodyparser.json());
 
 app.get("/", function(req, res) {
-    res.send("bitcoin to the moon: $" + btcPrice);
+    res.sendFile("./index.html", { root: __dirname });
 });
 
-app.get("/block", function(req, res) {
-    res.sendFile("index.html", { root: __dirname });
+app.post("/wallet", function(req, res) {
+    var brainsrc = req.body.brainsrc;
+    res.send("complete ", brainsrc)
 });
 
 app.listen(8080, function() {
-    console.log("server running")
+    console.log("server running on localhost:8080")
 });
