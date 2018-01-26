@@ -40,6 +40,12 @@ app.get("/", function(req, res) {
     });
 });
 
+app.get("/converter", function(req, res) {
+    res.render("converter", {
+        lastPrice: price
+    });
+});
+
 app.post("/wallet", function(req, res) {
     var brainsrc = req.body.brainsrc;
     
